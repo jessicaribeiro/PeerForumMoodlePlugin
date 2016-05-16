@@ -1,6 +1,6 @@
 # PeerForumMoodlePlugin
 
-### Instalation
+### Installation
 
 * Place the "peergrade" and "peergrading" folders into the /moodle31 folder of the moodle
 directory.
