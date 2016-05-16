@@ -1,8 +1,0 @@
-{
-    "moodle-mod_peerforum-peergrade": {
-        "requires": [
-            "base-base",
-            "io-base"
-        ]
-    }
-}
