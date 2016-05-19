@@ -29,11 +29,11 @@ class block_peerblock extends block_list {
 
     public function applicable_formats() {
         return array(
-                'admin' => false,
+                'admin' => true,
                 'site-index' => true,
                 'course-view' => true,
-                'course-view-social' => false,
-                'mod' => false,
+                'course-view-social' => true,
+                'mod' => true,
                 'my' => true
         );
     }
