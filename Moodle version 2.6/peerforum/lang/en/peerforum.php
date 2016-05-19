@@ -565,8 +565,6 @@ $string['rolewarning_help'] = 'To submit ratings users require the moodle/rating
 $string['scaleselectionrequired'] = 'When selecting a ratings aggregate type you must also select to use either a scale or set a maximum points.';
 
 
-
-
 // Deprecated since Moodle 3.0.
 $string['subscribersto'] = 'Subscribers to "{$a->name}"';
 
@@ -715,23 +713,24 @@ $string['onlyprofessor'] = 'Only professor';
 
 $string['existinggroups'] = 'Existing groups: {$a}';
 $string['exclusive'] = 'Mutually exclusive students: {$a}';
-$string['numconflits'] = 'Number of conflicts of mutually exclusive students: {$a}';
+$string['numconflicts'] = 'Number of conflicts of mutually exclusive students: {$a}';
 
 $string['addall'] = 'All member groups mutually exclusive';
-$string['removeall'] = 'Remove all conflits';
+$string['removeall'] = 'Remove all conflicts';
 
-$string['addconflit'] = 'Add conflit';
-$string['removeconflit'] = 'Remove conflit ';
+$string['addconflict'] = 'Add conflict';
+$string['removeconflict'] = 'Remove conflict ';
 $string['addstudent'] = 'Add student';
 $string['removestudent'] = 'Remove student ';
 
-$string['error:noconflitselected'] = 'Warning: No conflit selected.';
+$string['error:noconflictselected'] = 'Warning: No conflict selected.';
 $string['error:nostudentselected'] = 'Warning: No student selected.';
 
 $string['error:nofeedback'] = 'Warning: You must write a feedback text. Please try again.';
 $string['error:nopeergrade'] = 'Warning: You must select a grade. Please try again.';
 
 $string['submited:peergrade'] = 'Your peer grade was submitted with success.';
+$string['submited:peergradeupdated'] = 'Your peer grade was updated with success.';
 
 $string['finishpeergrade'] = 'Peer grading ends when minimum grades are given per post';
 $string['finishpeergrade_help'] = 'Peer grading ends in this course when the minimum number of peer grades per post are done';

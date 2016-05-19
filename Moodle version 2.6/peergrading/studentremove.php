@@ -47,43 +47,115 @@ require_login($courseid);
         //remove post from peergrader
         $info_grader = $DB->get_record('peerforum_peergrade_users', array('courseid' => $courseid, 'iduser' => $grader));
 
-        $to_peergrade = explode(';', $info_grader->poststopeergrade);
-        $to_peergrade = array_filter($to_peergrade);
-        $blocked = explode(';', $info_grader->postsblocked);
-        $blocked = array_filter($blocked);
+        if(!empty($info_grader)){
 
-        $data2 = new stdClass();
-        $data2->id = $info_grader->id;
-
-        if(in_array($postid, $to_peergrade)){
-            $key = array_search($postid, $to_peergrade);
-            unset($to_peergrade[$key]);
+            $to_peergrade = explode(';', $info_grader->poststopeergrade);
             $to_peergrade = array_filter($to_peergrade);
-            $to_peergrade_upd = implode(';', $to_peergrade);
-
-            $data2->poststopeergrade = $to_peergrade_upd;
-            $DB->update_record("peerforum_peergrade_users", $data2);
-
-        }
-
-        if(in_array($postid, $blocked)){
-            $key = array_search($postid, $blocked);
-            unset($blocked[$key]);
+            $peergraded = explode(';', $info_grader->postspeergradedone);
+            $peergraded = array_filter($peergraded);
+            $blocked = explode(';', $info_grader->postsblocked);
             $blocked = array_filter($blocked);
-            $blocked_upd = implode(';', $blocked);
+            $expired = explode(';', $info_grader->postsexpired);
+            $expired = array_filter($expired);
 
-            $data2->postsblocked = $blocked_upd;
-            $DB->update_record("peerforum_peergrade_users", $data2);
+            $data2 = new stdClass();
+            $data2->id = $info_grader->id;
+
+            if(in_array(-1, $to_peergrade)){
+                $a = array_search(-1, $to_peergrade);
+                unset($to_peergrade[$a]);
+                $posts = implode(';', $to_peergrade);
+                $data = new stdClass();
+                $data->id = $info_grader->id;
+                $data->poststopeergrade= $posts;
+                $DB->update_record('peerforum_peergrade_users', $data);
+            }
+
+            if(in_array($postid, $to_peergrade)){
+                $key = array_search($postid, $to_peergrade);
+                unset($to_peergrade[$key]);
+                $to_peergrade = array_filter($to_peergrade);
+                $to_peergrade_upd = implode(';', $to_peergrade);
+
+                $data2->poststopeergrade = $to_peergrade_upd;
+                $DB->update_record("peerforum_peergrade_users", $data2);
+
+            }
+
+            if(in_array(-1, $peergraded)){
+                $a = array_search(-1, $peergraded);
+                unset($peergraded[$a]);
+                $posts = implode(';', $peergraded);
+                $data = new stdClass();
+                $data->id = $info_grader->id;
+                $data->postspeergradedone= $posts;
+                $DB->update_record('peerforum_peergrade_users', $data);
+            }
+
+            if(in_array($postid, $peergraded)){
+                $key = array_search($postid, $peergraded);
+                unset($peergraded[$key]);
+                $peergraded = array_filter($peergraded);
+                $peergraded_upd = implode(';', $peergraded);
+
+                $data2->postspeergradedone = $peergraded_upd;
+                $DB->update_record("peerforum_peergrade_users", $data2);
+
+                $DB->delete_records("peerforum_peergrade", array('itemid' => $postid, 'userid' =>$info_grader->id));
+
+            }
+
+            if(in_array(-1, $blocked)){
+                $a = array_search(-1, $blocked);
+                unset($blocked[$a]);
+                $posts = implode(';', $blocked);
+                $data = new stdClass();
+                $data->id = $info_grader->id;
+                $data->postsblocked= $posts;
+                $DB->update_record('peerforum_peergrade_users', $data);
+            }
+
+            if(in_array($postid, $blocked)){
+                $key = array_search($postid, $blocked);
+                unset($blocked[$key]);
+                $blocked = array_filter($blocked);
+                $blocked_upd = implode(';', $blocked);
+
+                $data2->postsblocked = $blocked_upd;
+                $DB->update_record("peerforum_peergrade_users", $data2);
+
+            }
+
+            if(in_array(-1, $expired)){
+                $a = array_search(-1, $expired);
+                unset($expired[$a]);
+                $posts = implode(';', $expired);
+                $data = new stdClass();
+                $data->id = $info_grader->id;
+                $data->postsexpired = $posts;
+                $DB->update_record('peerforum_peergrade_users', $data);
+            }
+
+            if(in_array($postid, $expired)){
+                $key = array_search($postid, $expired);
+                unset($expired[$key]);
+                $expired = array_filter($expired);
+                $expired_upd = implode(';', $expired);
+
+                $data2->postsexpired = $expired_upd;
+                $DB->update_record("peerforum_peergrade_users", $data2);
+
+            }
+
+            $grade = $DB->get_records('peerforum_peergrade', array('itemid' => $postid, 'userid' => $grader));
+
+            if(!empty($grade)){
+                $DB->delete_records('peerforum_peergrade', array('itemid' => $postid, 'userid' => $grader));
+            }
+
+            $DB->delete_records('peerforum_time_assigned', array('courseid' => $courseid, 'userid' => $grader, 'postid' => $postid));
 
         }
-
-        $grade = $DB->get_records('peerforum_peergrade', array('itemid' => $postid, 'userid' => $grader));
-
-        if(!empty($grade)){
-            $DB->delete_records('peerforum_peergrade', array('itemid' => $postid, 'userid' => $grader));
-        }
-
-
     }
 /*} else {
     print_error('sectionpermissiondenied', 'peergrade');

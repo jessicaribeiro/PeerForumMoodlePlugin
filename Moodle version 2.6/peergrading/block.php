@@ -44,8 +44,6 @@ require_login($courseid);
 //if(has_capability('mod/peerforum:viewpanelpeergrades', $context){
 
     // insert the post in DB in the field 'postsblocked' in the table 'peergrade_users'
-
-
     $sql = "SELECT p.iduser, p.postsblocked, p.poststopeergrade, p.postspeergradedone, p.id
               FROM {peerforum_peergrade_users} p
               WHERE p.iduser = $user AND p.courseid = $courseid";
@@ -108,6 +106,16 @@ require_login($courseid);
             $blocked = explode(';', $posts[$user]->postsblocked);
             $blocked = array_filter($blocked);
 
+            if(in_array(-1, $blocked)){
+                $a = array_search(-1, $blocked);
+                unset($blocked[$a]);
+                $pts = implode(';', $blocked);
+                $data = new stdClass();
+                $data->id = $pts[$user]->id;
+                $data->postsblocked = $posts;
+                $DB->update_record('peerforum_peergrade_users', $data);
+            }
+
             if(in_array($postid, $blocked)){
                 $key = array_search($postid, $blocked);
                 unset($blocked[$key]);
@@ -122,11 +130,22 @@ require_login($courseid);
             $topeergrade = explode(';', $posts[$user]->poststopeergrade);
             $topeergrade = array_filter($topeergrade);
 
+            if(in_array(-1, $topeergrade)){
+                $a = array_search(-1, $topeergrade);
+                unset($topeergrade[$a]);
+                $posts = implode(';', $topeergrade);
+                $data = new stdClass();
+                $data->id = $posts[$user]->id;
+                $data->poststopeergrade = $posts;
+                $DB->update_record('peerforum_peergrade_users', $data);
+            }
+
             array_push($topeergrade, $postid);
             $topeergrade = array_filter($topeergrade);
             $posts_topeergrade = implode(';', $topeergrade);
 
         }
+
 
         // update in the database
         $data = new stdClass();
@@ -146,6 +165,5 @@ require_login($courseid);
 //}
 
 $returnurl = new moodle_url('/peergrading/index.php', array('userid' => $userid, 'courseid' => $courseid, 'display' => $display));
-
 
 redirect($returnurl);

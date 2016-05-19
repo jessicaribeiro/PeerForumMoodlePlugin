@@ -66,6 +66,26 @@ if(isset($_POST['removepeer'.$itemid])){
             $topeergrade = explode(';', $posts_topeergrade);
             $topeergrade = array_filter($topeergrade);
 
+            if(in_array(-1, $topeergrade)){
+                $a = array_search(-1, $topeergrade);
+                unset($topeergrade[$a]);
+                $posts = implode(';', $topeergrade);
+                $data = new stdClass();
+                $data->id = $peer_info->id;
+                $data->poststopeergrade = $posts;
+                $DB->update_record('peerforum_peergrade_users', $data);
+            }
+
+            if(in_array(-1, $blocked)){
+                $a = array_search(-1, $blocked);
+                unset($blocked[$a]);
+                $posts = implode(';', $blocked);
+                $data = new stdClass();
+                $data->id = $peer_info->id;
+                $data->postsblocked = $posts;
+                $DB->update_record('peerforum_peergrade_users', $data);
+            }
+
             //verify if post is blocked
             if(in_array($itemid, $blocked)){
                 $key = array_search($itemid, $blocked);
@@ -76,6 +96,16 @@ if(isset($_POST['removepeer'.$itemid])){
                 $data2 = new stdClass();
                 $data2->id = $peer_info->id;
                 $data2->postsblocked = $blocked_updated;
+            }
+
+            if(in_array(-1, $topeergrade)){
+                $a = array_search(-1, $topeergrade);
+                unset($topeergrade[$a]);
+                $posts = implode(';', $topeergrade);
+                $data = new stdClass();
+                $data->id = $peer_info->id;
+                $data->poststopeergrade = $posts;
+                $DB->update_record('peerforum_peergrade_users', $data);
             }
 
             //verify if post is assigned to peergrade

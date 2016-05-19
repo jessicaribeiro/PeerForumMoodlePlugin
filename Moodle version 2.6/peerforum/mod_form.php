@@ -220,13 +220,13 @@ $mform->addElement('header', 'gradescale', get_string('peergrading', 'peerforum'
        $grades = peerforum::available_maxgrades_list();
 
        $mform->addElement('select', 'professorpercentage', get_string('graderates', 'peerforum') , $grades);
-       $mform->setDefault('professorpercentage', 80);
+       $mform->setDefault('professorpercentage', 100);
        $mform->addHelpButton('professorpercentage', 'professorpercentage', 'peerforum');
        //$mform->disabledIf('ratepercentage', 'finalgrademode', 'eq', PEERFORUM_MODE_ONLYPEERGRADE);
        $mform->disabledIf('professorpercentage', 'peergradeassessed', 'eq', PEERGRADE_AGGREGATE_NONE);
 
        $mform->addElement('select', 'studentpercentage', get_string('gradepeergrades', 'peerforum') , $grades);
-       $mform->setDefault('studentpercentage', 20);
+       $mform->setDefault('studentpercentage', 100);
        $mform->addHelpButton('studentpercentage', 'studentpercentage', 'peerforum');
        //$mform->disabledIf('peergradepercentage', 'finalgrademode', 'eq', PEERFORUM_MODE_PROFESSOR);
        $mform->disabledIf('studentpercentage', 'peergradeassessed', 'eq', PEERGRADE_AGGREGATE_NONE);
@@ -272,7 +272,7 @@ $mform->addElement('header', 'gradescale', get_string('peergrading', 'peerforum'
            );
 
            $mform->addElement('select', 'whenpeergrades', get_string('when', 'peerforum'), $peergradetypes);
-           $mform->setDefault('whenpeergrades', 'after peergrade ends');
+           $mform->setDefault('whenpeergrades', 'always');
            $mform->addHelpButton('whenpeergrades', 'when', 'peerforum');
            $mform->disabledIf('whenpeergrades', 'peergradesvisibility', 'eq', 'onlyprofessor');
 
@@ -301,7 +301,7 @@ $mform->addElement('header', 'gradescale', get_string('peergrading', 'peerforum'
 
 
            $mform->addElement('select', 'whenfeedback', get_string('when', 'peerforum'), $peergradetypes);
-           $mform->setDefault('whenfeedback', 'after peergrade ends');
+           $mform->setDefault('whenfeedback', 'always');
            $mform->addHelpButton('whenfeedback', 'when', 'peerforum');
            $mform->disabledIf('whenfeedback', 'enablefeedback', 'eq', '0');
            $mform->disabledIf('whenfeedback', 'feedbackvisibility', 'eq', 'onlyprofessor');

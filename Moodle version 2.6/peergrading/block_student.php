@@ -38,24 +38,23 @@ $PAGE->set_url('/peergrading/block_student.php',  array('userid' => $userid, 'co
 
 require_login($courseid);
 
-//if(has_capability('mod/peerforum:viewpanelpeergrades', $context){
 
-    $user = $_GET['user'];
-    $status = $_GET['status'];
+$user = $_GET['user'];
+$status = $_GET['status'];
 
+global $DB;
 
-    global $DB;
+$id_db = $DB->get_record('peerforum_peergrade_users', array('courseid'=>$courseid, 'iduser' => $user));
 
-    $id = $DB->get_record('peerforum_peergrade_users', array('courseid'=>$courseid, 'iduser' => $user))->id;
+if(!empty($id_db)){
+    $id = $id_db->id;
 
     $data = new stdClass();
     $data->id = $id;
     $data->userblocked = !$status;
 
     $DB->update_record('peerforum_peergrade_users', $data);
-/*} else {
-    print_error('sectionpermissiondenied', 'peergrade');
-}*/
+}
 
 $returnurl = new moodle_url('/peergrading/index.php', array('userid' => $userid, 'courseid' => $courseid, 'display' => $display));
 

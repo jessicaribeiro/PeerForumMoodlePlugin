@@ -50,9 +50,9 @@ require_login($courseid);
                     $DB->delete_records('peerforum_groups', array('courseid' => $courseid));
                 }
 
-                $conflits = $DB->get_records('peerforum_peergrade_conflits', array('courseid' => $courseid));
-                if(!empty($conflits)){
-                    $DB->delete_records('peerforum_peergrade_conflits', array('courseid' => $courseid));
+                $conflicts = $DB->get_records('peerforum_peergrade_conflict', array('courseid' => $courseid));
+                if(!empty($conflicts)){
+                    $DB->delete_records('peerforum_peergrade_conflict', array('courseid' => $courseid));
                 }
 
                 // read from csv
@@ -110,9 +110,7 @@ require_login($courseid);
             }
         }
     }
-/*} else {
-    print_error('sectionpermissiondenied', 'peergrade');
-}*/
+
 
 $returnurl = new moodle_url('/peergrading/index.php', array('userid' => $userid, 'courseid' => $courseid, 'display' => $display));
 

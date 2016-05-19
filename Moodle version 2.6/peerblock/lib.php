@@ -51,9 +51,10 @@ if (is_file($CFG->dirroot.'/mod/peerforum/lib.php'))
 
         $old_post = $posts[$first_key];
 
-        $time = get_time_expire($old_post);
+        $time = get_time_expire($old_post, $userid);
 
-        return $time->days;
+        //return $time->days;
+        return $time;
 
     } else {
         return null;

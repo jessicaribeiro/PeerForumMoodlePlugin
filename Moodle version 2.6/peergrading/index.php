@@ -137,7 +137,7 @@ $postsexpired = get_string('postsexpired', 'block_peerblock');
 $managegraders = get_string('managegraders', 'block_peerblock');
 $viewpeergrades = get_string('viewpeergrades', 'block_peerblock');
 $manageposts = get_string('manageposts', 'block_peerblock');
-$manageconflits = get_string('manageconflits', 'block_peerblock');
+$manageconflicts = get_string('manageconflicts', 'block_peerblock');
 
 
 echo $OUTPUT->box_start();
@@ -165,7 +165,7 @@ echo $OUTPUT->box_start();
 
         } else if ($display == '4'){
             $display = '4';
-            $currenttab = 'display_manageconflits';
+            $currenttab = 'display_manageconflicts';
 
         }
 
@@ -183,9 +183,9 @@ echo $OUTPUT->box_start();
                                     new moodle_url('/peergrading/index.php', array('userid' => $userid, 'courseid' => $courseid, 'display' => '3')),
                                     $viewpeergrades);
 
-        $row[] = new tabobject('display_manageconflits',
+        $row[] = new tabobject('display_manageconflicts',
                                     new moodle_url('/peergrading/index.php', array('userid' => $userid, 'courseid' => $courseid, 'display' => '4')),
-                                    $manageconflits);
+                                    $manageconflicts);
 
     }
 
@@ -243,7 +243,7 @@ if($display == '-1'){
             '<td bgcolor=#cccccc><b> Peer grader </b></td>'.
             '<td bgcolor=#cccccc><b> Remove grader </b></td>'.
             '<td bgcolor=#cccccc><b> Time left to grade </b></td>'.
-            '<td bgcolor=#cccccc><b> Gave grade? </b></td>'.
+            '<td bgcolor=#cccccc><b> Graded? </b></td>'.
             '<td bgcolor=#cccccc><b> Status </b></td>'.
             '<td bgcolor=#cccccc><b> Block/Unblock post to grader </b></td>'.
           '</tr>';
@@ -258,7 +258,6 @@ if($display == '-1'){
 
               $count_graders = count($posts[$i]->peergraders);
 
-             // if($count_graders > 0){
                   $count = $count_graders + 2;
                   if($even){
                       $color = '#f2f2f2';
@@ -277,7 +276,9 @@ if($display == '-1'){
                   for($k = 0; $k < $count_graders; $k++){
                       $peergraderid = $posts[$i]->peergraders[$k];
                       $status = get_post_status($postid, $peergraderid, $courseid);
-                      $time = $posts[$i]->timeexpire ." day(s)";
+                     // $time_expite = $posts[$i]->timeexpire;
+                      $time_expire = get_time_expire($postid, $peergraderid);
+                      $time =  $time_expire->h.'h:'.$time_expire->i.'m';
 
 
                       $grader = $DB->get_record('user', array('id' => $peergraderid));
@@ -285,8 +286,6 @@ if($display == '-1'){
                       $peergrader = html_writer::link(new moodle_url('/user/view.php', array('id'=> $peergraderid)), $grader->firstname .' '. $grader->lastname);
 
                       $baseurl = new moodle_url('/peergrading/block.php', array('userid' => $userid, 'courseid' => $courseid, 'display' => $display, 'postid' => $postid, 'user' => $peergraderid, 'status' => $status));
-                     // $baseurl = $url.'&postid='.$postid.'&user='.$peergraderid.'&status='.$status;
-
 
                       $peergradedone = verify_peergrade($postid, $peergraderid);
 
@@ -536,6 +535,8 @@ if($display == '-2'){
 
 
                         }
+
+
                         $assign_url = new moodle_url('/peergrading/assign.php', array('userid' => $userid, 'courseid' => $courseid, 'display' => $display));
 
                         $assign_baseurl = $assign_url.'&'.'user='.$grader.'&courseid='.$courseid;
@@ -595,7 +596,7 @@ if($display == '-2'){
     }
 
 }
-// View peergrades
+// View Peergrades
 if($display == '3'){
     if(has_capability('mod/peerforum:viewpanelpeergrades', $context)){
         $info = get_posts_grades();
@@ -605,7 +606,6 @@ if($display == '3'){
         }
 
         if(!empty($info)){
-
 
             echo '<table class="managepeers"">'.
               '<tr">'.
@@ -636,6 +636,8 @@ if($display == '3'){
 
                 echo '<tr>'.'<td bgcolor='."$color".' rowspan='.$count.'>'.'(id:'.$postid.') '.$postlink.'</td>';
 
+                $all_grades = array();
+
                 for($i = 0; $i < $count_peergrades; $i++){
                     $grader = $info[$postid][$i]->user;
                     $grader_db = $DB->get_record('user', array('id' => $grader));
@@ -643,6 +645,7 @@ if($display == '3'){
 
                     if(isset($info[$postid][$i]->peergrade)){
                         $grade = $info[$postid][$i]->peergrade;
+                        array_push($all_grades, $grade);
                     } else {
                         $grade = '-';
                     }
@@ -653,8 +656,36 @@ if($display == '3'){
                     }
 
                     echo '<tr>'.'<td bgcolor='."$color".'>'. $grader_link .'</td>'.'<td bgcolor='."$color".'>'.$grade.'</td>'.'<td bgcolor='."$color".'>'.$feedback.'</td>'.'</tr>';
+                }
+
+                $discussion = $DB->get_record('peerforum_discussions', array('id' => $postinfo->discussion));
+                $peer_forum = $DB->get_record('peerforum', array('id' => $discussion->peerforum));
+
+                $assessed = $peer_forum->peergradeassessed;
+
+                if($assessed == PEERGRADE_AGGREGATE_AVERAGE){
+                    $assessed_mode = 'Average';
+                    $assessed_grade = array_sum($all_grades)/count($all_grades);
+
+                } else if ($assessed == PEERGRADE_AGGREGATE_COUNT){
+                    $assessed_mode = 'Count';
+                    $assessed_grade = count($all_grades);
+
+                } else if ($assessed == PEERGRADE_AGGREGATE_MAXIMUM){
+                    $assessed_mode = 'Maximum';
+                    $assessed_grade = max($all_grades);
+
+                } else if ($assessed == PEERGRADE_AGGREGATE_MINIMUM){
+                    $assessed_mode = 'Minimum';
+                    $assessed_grade = min($all_grades);
+
+
+                } else if ($assessed == PEERGRADE_AGGREGATE_SUM){
+                    $assessed_mode = 'Sum';
+                    $assessed_grade = array_sum($all_grades);
 
                 }
+                echo '<tr><td style="font-weight:bold; color:black" bgcolor='."$color".'>'. $assessed_mode .'</td><td bgcolor='."$color".'> - </td><td style="font-weight:bold; color:black" bgcolor='."$color".'>'.$assessed_grade.'</td><td bgcolor='."$color".'> - </td></tr>';
 
                 echo '</tr>';
             }
@@ -665,7 +696,7 @@ if($display == '3'){
     }
 }
 
-//Manage Conflits
+//Manage conflicts
 if($display == '4'){
     if(has_capability('mod/peerforum:viewpanelpeergrades', $context)){
         $url = new moodle_url('/peergrading/importgroups.php', array('userid' => $userid, 'courseid' => $courseid, 'display' => $display));
@@ -675,10 +706,10 @@ if($display == '4'){
                     'Select groups file: <input type="file" name="filegroups" accept=".csv">'. '<br>'.
                     '<div class="buttons"><input type="submit" style="margin-left:3px;margin-top:10px;font-size: 13px;" id="filegroupssubmit" name="filegroupssubmit" value="'.get_string('uploadfile', 'block_peerblock').'"/>'.'<br>'.
                     '<span style="color:grey">File extension: .csv</span>'.'<br>'.
-                    '<span style="color:grey">File format: each file line represents a group of students separated by a comma</span>'. '<br>'.
+                    '<span style="color:grey">File format: each file line represents a group of students (first and last name) separated by a comma</span>'. '<br>'.
                     '<span style="color:grey">File example:</span>'.'<br>'.
                     '<span style="color:grey">student#1,student#2</span>'.'<br>'.
-                    '<span style="color:grey">student#3,student#4</span>'.'<br>'.
+                    '<span style="color:grey">student#3,student#4,student#5</span>'.'<br>'.
                     '</div></form>';
 
         echo $select_file;
@@ -695,7 +726,7 @@ if($display == '4'){
             $num_groups = count($currentgroups);
 
             foreach ($currentgroups as $id => $value) {
-                $currentgroupsoptions .= '<option disabled value="'.$currentgroups[$id]->groupid.'.">'.'Group #'. $currentgroups[$id]->groupid.'</option>';
+                $currentgroupsoptions .= '<option disabled style="font-weight:bold; color:black" value="'.$currentgroups[$id]->groupid.'.">'.'Group #'. $currentgroups[$id]->groupid.'</option>';
 
                 $students_id = explode(';', $currentgroups[$id]->studentsid);
                 $students_id = array_filter($students_id);
@@ -713,30 +744,41 @@ if($display == '4'){
         }
 
 
-        $conflits = $DB->get_records('peerforum_peergrade_conflits', array('courseid' => $courseid));
+        $conflicts = $DB->get_records('peerforum_peergrade_conflict', array('courseid' => $courseid));
 
-        $conflitssoptions = '';
+        $conflictssoptions = '';
 
-        if(!empty($conflits)){
-            $num_conflits = count($conflits);
-            $countconflit=1;
+        if(!empty($conflicts)){
+            $num_conflicts = count($conflicts);
+            $countconflict=1;
 
-            $last_conflit = max(array_keys($conflits));
+            $last_conflict = max(array_keys($conflicts));
 
-            foreach ($conflits as $id => $value) {
-                if($id == $last_conflit){
-                    $conflitssoptions .= '<option selected value="conflit:'.$conflits[$id]->id.'.">'.'Conflit #'. $countconflit.'</option>';
+            foreach ($conflicts as $id => $value) {
+                if($id == $last_conflict){
+                    $conflictssoptions .= '<option selected style="font-weight:bold; color:black" value="conflict:'.$conflicts[$id]->id.'.">'.'Conflict #'. $countconflict.'</option>';
                 }else {
-                    $conflitssoptions .= '<option value="conflit:'.$conflits[$id]->id.'.">'.'Conflit #'. $countconflit.'</option>';
+                    $conflictssoptions .= '<option style="font-weight:bold; color:black" value="conflict:'.$conflicts[$id]->id.'.">'.'Conflict #'. $countconflict.'</option>';
                 }
 
-                $students_id = explode(';', $conflits[$id]->idstudents);
+                $students_id = explode(';', $conflicts[$id]->idstudents);
                 $students_id = array_filter($students_id);
+
+                if(in_array(-1, $students_id)){
+                    $a = array_search(-1, $students_id);
+                    unset($students_id[$a]);
+                    $sts = implode(';',$students_id);
+                    $data = new stdClass();
+                    $data->id = $conflicts[$id]->id;
+                    $data->idstudents= $sts;
+                    $DB->update_record('peerforum_peergrade_conflict', $data);
+                }
+
 
                 foreach ($students_id as $key => $value) {
                     $std_id = $students_id[$key];
 
-                    $val = $conflits[$id]->id.'|'. $std_id;
+                    $val = $conflicts[$id]->id.'|'. $std_id;
 
                     if($std_id != -1){
 
@@ -754,30 +796,32 @@ if($display == '4'){
                             }
                         }
 
-                        $conflitssoptions .= '<option value="student:'.$val.'.">'.format_string($std_name).' (group #'.$std_group.')'.'</option>';
+                        $conflictssoptions .= '<option value="student:'.$val.'.">'.format_string($std_name).' (group #'.$std_group.')'.'</option>';
                     }
                 }
-                $countconflit = $countconflit + 1;
+                $countconflict = $countconflict + 1;
 
             }
         } else {
-            $num_conflits = 0;
+            $num_conflicts = 0;
         }
 
-        $url_conflits = new moodle_url('/peergrading/manageconflits.php', array('userid' => $userid, 'courseid' => $courseid, 'display' => $display));
+        $url_conflicts = new moodle_url('/peergrading/manageconflicts.php', array('userid' => $userid, 'courseid' => $courseid, 'display' => $display));
 
         ?>
         <div id="addmembersform">
-            <form id="assignform" method="post" action=" <?php echo $url_conflits ?>">
+            <form id="assignform" method="post" action=" <?php echo $url_conflicts ?>">
             <div>
             <input type="hidden" name="sesskey" value="<?php p(sesskey()); ?>" />
             <table summary="" class="generaltable generalbox groupmanagementtable boxaligncenter">
             <tr>
               <td id="existingcell">
+                  <br>
                   <input name="addall" id="addall" type="submit"
                             value="<?php echo get_string('addall', 'peerforum'); ?>"
                             title="<?php print_string('addall', 'peerforum'); ?>"
-                            />
+                            onclick="return confirm('This action will overwrite the existing information. Continue?')"
+                            /><br><br>
                   <label for="addselect"><?php print_string('existinggroups', 'peerforum', $num_groups); ?></label>
                   <div class="userselector" id="addselect_wrapper">
                   <select name="addselect[]" size="20" id="addselect" multiple="multiple"
@@ -788,16 +832,7 @@ if($display == '4'){
                   </select></div></td>
               <td id="buttonscell">
                 <p class="arrow_button">
-                    <input name="addconflit" id="addconflit" type="submit"
-                           value="<?php echo get_string('addconflit', 'peerforum').'&nbsp;'.$OUTPUT->rarrow(); ?>"
-                           title="<?php print_string('addconflit', 'peerforum'); ?>"
-                           /><br>
-
-                   <input name="removeconflit" id="removeconflit" type="submit"
-                              value="<?php echo $OUTPUT->larrow().'&nbsp;'.get_string('removeconflit', 'peerforum'); ?>"
-                              title="<?php print_string('removeconflit', 'peerforum'); ?>"
-                              /><br><br>
-
+                    <br><br><br>
                     <input name="addstudent" id="addstudent" type="submit"
                            value="<?php echo get_string('addstudent', 'peerforum').'&nbsp;'.$OUTPUT->rarrow(); ?>"
                            title="<?php print_string('addstudent', 'peerforum'); ?>"
@@ -813,21 +848,29 @@ if($display == '4'){
                   <input name="removeall" id="removeall" type="submit"
                             value="<?php echo get_string('removeall', 'peerforum'); ?>"
                             title="<?php print_string('removeall', 'peerforum'); ?>"
-                            />
-                  <label for="conflitselect"><?php print_string('numconflits', 'peerforum', $num_conflits); ?></label>
-                  <div class="userselector" id="conflitselect_wrapper">
-                  <select name="conflitselect[]" size="20" id="conflitselect" multiple="multiple"
+                            onclick="return confirm('Are you sure you want to remove all conflicts?')"
+                            /><br>
+                <input name="addconflict" id="addconflict" type="submit"
+                       value="<?php echo get_string('addconflict', 'peerforum').'&nbsp;'; ?>"
+                       title="<?php print_string('addconflict', 'peerforum'); ?>"
+                       />
+               <input name="removeconflict" id="removeconflict" type="submit"
+                          value="<?php echo '&nbsp;'.get_string('removeconflict', 'peerforum'); ?>"
+                          title="<?php print_string('removeconflict', 'peerforum'); ?>"
+                          onclick="return confirm('Are you sure you want to remove conflit?')"
+                          /><br>
+
+                  <label for="conflictselect"><?php print_string('numconflicts', 'peerforum', $num_conflicts); ?></label>
+                  <div class="userselector" id="conflictselect_wrapper">
+                  <select name="conflictselect[]" size="20" id="conflictselect" multiple="multiple"
                           onfocus="document.getElementById('assignform').add.disabled=true;
                                    document.getElementById('assignform').remove.disabled=false;
-                                   document.getElementById('assignform').conflitselect.selectedIndex=-1;">
-                 <?php echo $conflitssoptions ?>
+                                   document.getElementById('assignform').conflictselect.selectedIndex=-1;">
+                 <?php echo $conflictssoptions ?>
                  </select>
                   </div>
                </td>
             </tr>
-            <tr><td colspan="3" id="backcell">
-                <input type="submit" name="cancel" value="<?php print_string('backtogroupings', 'group'); ?>" />
-            </td></tr>
             </table>
             </div>
             </form>
@@ -915,27 +958,36 @@ if($display == '5'){
     echo $OUTPUT->heading(format_string($postsexpired), 2);
 
     $userposts_expired = array();
+
+    //$peergrade->update_posts_expired($USER->id, $courseid);
     $userposts_expired = peerforum_get_user_posts_expired($USER->id, $courseid);
+    $userposts_peergraded = peerforum_get_user_posts_peergraded($USER->id, $courseid);
 
         if(!empty($userposts_expired)){
             for($i = 0; $i < count($userposts_expired); $i++){
-                $post_expired = peerforum_get_post_full($userposts_expired[$i]);
+                if(!empty($userposts_peergraded)){
+                    if(!in_array($userposts_expired[$i], $userposts_peergraded)){
+                        $post_expired = peerforum_get_post_full($userposts_expired[$i]);
 
-                if(!empty($post_expired)){
-                    $discussion = $DB->get_record('peerforum_discussions', array('id' => $post_expired->discussion));
-                    $peerforum = $DB->get_record('peerforum', array('id' => $discussion->peerforum));
-                    $course = $DB->get_record('course', array('id' => $peerforum->course));
-                    $cm = get_coursemodule_from_instance('peerforum', $peerforum->id, $course->id);
+                        if(!empty($post_expired)){
+                            $discussion = $DB->get_record('peerforum_discussions', array('id' => $post_expired->discussion));
+                            $peerforum = $DB->get_record('peerforum', array('id' => $discussion->peerforum));
+                            $course = $DB->get_record('course', array('id' => $peerforum->course));
+                            $cm = get_coursemodule_from_instance('peerforum', $peerforum->id, $course->id);
 
-                    $displaymode = get_user_preferences("peerforum_displaymode", $CFG->peerforum_displaymode);
+                            $displaymode = get_user_preferences("peerforum_displaymode", $CFG->peerforum_displaymode);
 
-                    $index = true;
+                            $index = true;
 
-                    peerforum_print_discussion($course, $cm, $peerforum, $discussion, $post_expired, $displaymode, null, true, true, true, false, $PAGE->url, $index);
+                            peerforum_print_discussion($course, $cm, $peerforum, $discussion, $post_expired, $displaymode, null, true, true, true, false, $PAGE->url, $index);
+                        }
+                    } else {
+                        echo 'No posts whose peer grading time has expired.';
+                    }
                 }
             }
         }
-        if(empty($userposts_graded)){
+        if(empty($userposts_expired)){
             echo 'No posts whose peer grading time has expired.';
         }
 

@@ -33,6 +33,16 @@ require_login($courseid);
             $topeergrade = explode(';', $postsuser->poststopeergrade);
             $topeergrade = array_filter($topeergrade);
 
+            if(in_array(-1, $topeergrade)){
+                $a = array_search(-1, $topeergrade);
+                unset($topeergrade[$a]);
+                $posts = implode(';', $topeergrade);
+                $data = new stdClass();
+                $data->id = $postsuser->id;
+                $data->poststopeergrade = $posts;
+                $DB->update_record('peerforum_peergrade_users', $data);
+            }
+
             if(in_array($postid, $topeergrade)){
                 $key = array_search($postid, $topeergrade);
                 unset($topeergrade[$key]);
@@ -45,11 +55,13 @@ require_login($courseid);
                 $data->poststopeergrade = $posts_topeergrade;
 
                 $DB->update_record("peerforum_peergrade_users", $data);
+
+                $DB->delete_records('peerforum_time_assigned', array('courseid' => $courseid, 'userid' => $user, 'postid' => $postid));
+
             }
 
             else {
                //post was not assigned to peergrade
-               //echo $OUTPUT->error_text("Post ($postid) was not assigned to ($user) to peergrade.");
                $erro = $OUTPUT->notification("Post ($postid) was not assigned to ($user) to peergrade.", 'notifyproblem');
                $returnurl = new moodle_url('/peergrading/index.php', array('userid' => $userid, 'courseid' => $courseid, 'display' => $display));
                redirect($returnurl, $erro, 10);
@@ -59,6 +71,16 @@ require_login($courseid);
             $blocked = array();
             $blocked = explode(';', $postsuser->postsblocked);
             $blocked = array_filter($blocked);
+
+            if(in_array(-1, $blocked)){
+                $a = array_search(-1, $blocked);
+                unset($blocked[$a]);
+                $posts = implode(';', $blocked);
+                $data = new stdClass();
+                $data->id = $postsuser->id;
+                $data->postsblocked = $posts;
+                $DB->update_record('peerforum_peergrade_users', $data);
+            }
 
             if(in_array($postid, $blocked)){
                 $key = array_search($postid, $blocked);
@@ -76,15 +98,12 @@ require_login($courseid);
         }
     } else{
         //post does not exist
-        //echo $OUTPUT->error_text("Post ($postid) does not exist.");
         $erro = $OUTPUT->notification("Post ($postid) does not exist.", 'notifyproblem');
         $returnurl = new moodle_url('/peergrading/index.php', array('userid' => $userid, 'courseid' => $courseid, 'display' => $display));
         redirect($returnurl, $erro, 10);
 
     }
-/*} else {
-    print_error('sectionpermissiondenied', 'peergrade');
-}*/
+
 
 $returnurl = new moodle_url('/peergrading/index.php', array('userid' => $userid, 'courseid' => $courseid, 'display' => $display));
 

@@ -54,22 +54,7 @@ require_once($CFG->dirroot . '/repository/lib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_peerfeedback_post_form extends moodleform {
-    /**
-     * Returns the options array to use in filemanager for peerforum attachments
-     *
-     * @param stdClass $peerforum
-     * @return array
-     */
-
-     /*$mform_peerfeedback = new mod_peerfeedback_post_form('lib.ph',array('course' => $course,
-                                                                 'cm' => $cm,
-                                                                 'modcontext' => $modcontext,
-                                                                 'peerforum' => $peerforum,
-                                                                 'post' => $post));
-
-
-     $output .= html_writer::tag('div', array('action' => $mform_peerfeedback->display()));*/
-
+    
     /**
      * Returns the options array to use in peerforum text editor
      *

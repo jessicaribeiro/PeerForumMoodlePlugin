@@ -35,15 +35,7 @@ require_login($courseid);
 
             $all_students = get_students_can_be_assigned($courseid, $itemid, $postauthor);
 
-            //$first_key = key($all_students);
-            //$size = count($all_students)-1;
-            //$last_key = key(array_slice($all_students, -1, 1, TRUE));
-
-            //$random = rand($first_key, $last_key);
-
             $id = array_rand($all_students, 1);
-            //shuffle($numbers);
-            //$random = array_slice($numbers, 0, 1);
 
             $student_id = $id;
         }
@@ -73,6 +65,16 @@ require_login($courseid);
 
                     $posts = explode(';', $poststograde);
 
+                    if(in_array(-1, $posts)){
+                        $a = array_search(-1, $posts);
+                        unset($posts[$a]);
+                        $pts = implode(';', $posts);
+                        $data = new stdClass();
+                        $data->id = $peers_info->id;
+                        $data->poststopeergrade = $pts;
+                        $DB->update_record('peerforum_peergrade_users', $data);
+                    }
+
                     $posts = array_filter($posts);
                     array_push($posts, $itemid);
                     $posts = array_filter($posts);
@@ -87,19 +89,38 @@ require_login($courseid);
 
                     $DB->update_record("peerforum_peergrade_users", $data2);
 
+                    $time = new stdclass();
+                    $time->courseid = $courseid;
+                    $time->postid = $itemid;
+                    $time->userid = $student_id;
+                    $time->timeassigned = time();
+                    $time->timemodified = time();
+
+                    $DB->insert_record("peerforum_time_assigned", $time);
+
                 } else{
                     $data2 = new stdClass();
                     $data2->courseid = $courseid;
                     $data2->iduser = $student_id;
                     $data2->poststopeergrade = $itemid;
+                    $data2->postspeergradedone = -1;
+                    $data2->postsblocked = -1;
+                    $data2->postsexpired = -1;
+
+                    $time = new stdclass();
+                    $time->courseid = $courseid;
+                    $time->postid = $itemid;
+                    $time->userid = $student_id;
+                    $time->timeassigned = time();
+                    $time->timemodified = time();
+
+                    $DB->insert_record("peerforum_time_assigned", $time);
 
                     $DB->insert_record("peerforum_peergrade_users", $data2);
                 }
             }
     }
-/*} else {
-    print_error('sectionpermissiondenied', 'peergrade');
-}*/
+
 
 $returnurl = new moodle_url('/peergrading/index.php', array('userid' => $userid, 'courseid' => $courseid, 'display' => $display));
 

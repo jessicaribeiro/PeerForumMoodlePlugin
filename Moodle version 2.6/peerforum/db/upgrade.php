@@ -576,11 +576,11 @@ if ($oldversion < 2015111736) {
 
 if ($oldversion < 2015111739) {
 
-    $table = new xmldb_table('peerforum_peergrade_conflits');
+    $table = new xmldb_table('peerforum_peergrade_conflict');
 
     $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
     $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-    //$table->add_field('conflitgroup', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+    //$table->add_field('conflictgroup', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
     $table->add_field('idstudents', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
     //$table->add_field('namestudents', XMLDB_TYPE_CHAR, '1000', null, XMLDB_NOTNULL, null, null);
 

@@ -99,12 +99,26 @@ function update_post_peergraders($postid, $peergraders){
 
          if(empty($existing_info)){
              $data->poststopeergrade = $postid;
+             $data->postspeergradedone = -1;
+             $data->postsblocked = -1;
+             $data->postsexpired = -1;
+
              $DB->insert_record('peerforum_peergrade_users', $data);
          }
          else{
              $array_posts = array();
              $posts = explode(';', $existing_posts);
              $posts = array_filter($posts);
+
+             if(in_array(-1, $posts)){
+                 $a = array_search(-1, $posts);
+                 unset($posts[$a]);
+                 $pts = implode(';', $posts);
+                 $data = new stdClass();
+                 $data->id = $userid;
+                 $data->poststopeergrade = $pts;
+                 $DB->update_record('peerforum_peergrade_users', $data);
+             }
 
              foreach($posts as $post => $value){
                  array_push($array_posts, $posts[$post]);
@@ -160,7 +174,7 @@ function update_post_peergraders($postid, $peergraders){
 
 
          //verify if belong to different project groups
-         $groups = $DB->get_records('peerforum_groups', array('courseid'=>$courseid));
+        /* $groups = $DB->get_records('peerforum_groups', array('courseid'=>$courseid));
 
          $user_group = null;
 
@@ -187,25 +201,35 @@ function update_post_peergraders($postid, $peergraders){
              $user_group = $DB->get_record('groups_members', array('userid' => $postauthor));
 
              $peer_group = $DB->get_record('groups_members', array('userid' => $peer));
-         }
+         }*/
 
-         $conflits = $DB->get_records('peerforum_peergrade_conflits', array('courseid' => $courseid));
+         $conflicts = $DB->get_records('peerforum_peergrade_conflict', array('courseid' => $courseid));
 
-         $conflit = 0;
+         $conflict = 0;
 
-         foreach ($conflits as $id => $value) {
-             $students = explode(';', $conflits[$id]->idstudents);
+         foreach ($conflicts as $id => $value) {
+             $students = explode(';', $conflicts[$id]->idstudents);
              $students = array_filter($students);
 
+             if(in_array(-1, $students)){
+                 $a = array_search(-1, $students);
+                 unset($students[$a]);
+                 $sts = implode(';', $students);
+                 $data = new stdClass();
+                 $data->id = $conflicts[$id]->id;
+                 $data->idstudents= $sts;
+                 $DB->update_record('peerforum_peergrade_conflict', $data);
+             }
+
              if(in_array($peer, $students) && in_array($postauthor, $students)){
-                 $conflit = 1;
+                 $conflict = 1;
                  break;
 
              }
          }
 
-         if($conflit == 0){
-             if($user_group != $peer_group){
+         if($conflict == 0){
+            /* if($user_group != $peer_group){
                  if(empty($array_peergraders) && !(in_array($peer, $peers))){
                      array_push($array_peergraders, $peer);
                  }
@@ -217,15 +241,15 @@ function update_post_peergraders($postid, $peergraders){
                  else if(in_array($peer, $array_peergraders)){
                      assign_random($courseid, $array_users, $postauthor, $postid, $peerid);
                  }
-             } else {
+             } else {*/
                  $key = array_search($peer, $array_users);
                  unset($array_users[$key]);
                  $array_users_upd = array_filter($array_users);
 
                  assign_random($courseid, $array_users_upd, $postauthor, $postid, $peerid);
-             }
+            // }
          }
-         if ($conflit == 1){
+         if ($conflict == 1){
 
              $key = array_search($peer, $array_users);
              unset($array_users[$key]);
@@ -589,6 +613,74 @@ class peergrade implements renderable {
 
 }
 
+
+public function update_peerforum_users(){
+    global $DB;
+
+    $info = $DB->get_records('peerforum_peergrade_users');
+
+    if(!empty($info)){
+
+        foreach ($info as $key => $value) {
+            $posts_to_peergrade = $info[$key]->poststopeergrade;
+            $posts_to_peergrade = explode(';', $posts_to_peergrade);
+            $posts_to_peergrade = array_filter($posts_to_peergrade);
+
+            $posts_peergrade_done = $info[$key]->postspeergradedone;
+            $posts_peergrade_done = explode(';', $posts_peergrade_done);
+            $posts_peergrade_done = array_filter($posts_peergrade_done);
+
+            $posts_blocked = $info[$key]->postsblocked;
+            $posts_blocked = explode(';', $posts_blocked);
+            $posts_blocked = array_filter($posts_blocked);
+
+            $posts_expired = $info[$key]->postsexpired;
+            $posts_expired = explode(';', $posts_expired);
+            $posts_expired = array_filter($posts_expired);
+
+            if(in_array(-1, $posts_to_peergrade)){
+                $a = array_search(-1, $posts_to_peergrade);
+                unset($posts_to_peergrade[$a]);
+                $posts_new = implode(';', $posts_to_peergrade);
+                $data = new stdClass();
+                $data->id = $info[$key]->id;
+                $data->poststopeergrade = $posts_new;
+                $DB->update_record('peerforum_peergrade_users', $data);
+            }
+
+            if(in_array(-1, $posts_peergrade_done)){
+                $a = array_search(-1, $posts_peergrade_done);
+                unset($posts_peergrade_done[$a]);
+                $posts_new = implode(';', $posts_peergrade_done);
+                $data = new stdClass();
+                $data->id = $info[$key]->id;
+                $data->postspeergradedone = $posts_new;
+                $DB->update_record('peerforum_peergrade_users', $data);
+            }
+
+            if(in_array(-1, $posts_blocked)){
+                $a = array_search(-1, $posts_blocked);
+                unset($posts_blocked[$a]);
+                $posts_new = implode(';', $posts_blocked);
+                $data = new stdClass();
+                $data->id = $info[$key]->id;
+                $data->postsblocked = $posts_new;
+                $DB->update_record('peerforum_peergrade_users', $data);
+            }
+            if(in_array(-1, $posts_expired)){
+                $a = array_search(-1, $posts_expired);
+                unset($posts_expired[$a]);
+                $posts_new = implode(';', $posts_expired);
+                $data = new stdClass();
+                $data->id = $info[$key]->id;
+                $data->postsexpired = $posts_new;
+                $DB->update_record('peerforum_peergrade_users', $data);
+            }
+        }
+
+    }
+}
+
 /**
  * Returns this peergrades aggregate value as a string.
  *
@@ -657,25 +749,47 @@ public function get_time_created($postid) {
 
 }
 
-public function verify_post_expired($postid, $peerforum, $peergrade){
+public function get_time_assigned($postid, $userid) {
+    global $DB;
+
+    $time = $DB->get_record('peerforum_time_assigned', array('postid' => $postid, 'userid' => $userid));
+
+    if(!empty($time)){
+        return $time->timeassigned;
+    }
+}
+
+public function get_time_modified_peergrade($postid) {
+    global $DB;
+
+    $time = $DB->get_record('peerforum_time_assigned', array('postid' => $postid, 'userid' => $userid));
+
+    return $time->timemodified;
+
+
+}
+
+public function verify_post_expired($postid, $peerforum, $peergrade, $userid){
     global $DB, $PAGE;
 
     //verify if the user can peergrade in a period of time
-    $time_created_db = usergetdate($peergrade->get_time_created($postid));
+    $time_assigned_db = usergetdate($peergrade->get_time_assigned($postid, $userid));
 
     $time_to_peergrade = $peerforum->timetopeergrade;
 
-    $date_time_created = new stdClass();
-    $date_time_created->year = $time_created_db['year'];
-    $date_time_created->mon = $time_created_db['mon'];
-    $date_time_created->mday = $time_created_db['mday'];
+    $date_time_assigned = new stdClass();
+    $date_time_assigned->year = $time_assigned_db['year'];
+    $date_time_assigned->mon = $time_assigned_db['mon'];
+    $date_time_assigned->mday = $time_assigned_db['mday'];
+    $date_time_assigned->hours = $time_assigned_db['hours'];
+    $date_time_assigned->minutes = $time_assigned_db['minutes'];
+    $date_time_assigned->seconds = $time_assigned_db['seconds'];
 
-    $time_created = new DateTime("$date_time_created->year-$date_time_created->mon-$date_time_created->mday");
-
+    $time_assigned = new DateTime("$date_time_assigned->year-$date_time_assigned->mon-$date_time_assigned->mday $date_time_assigned->hours:$date_time_assigned->minutes:$date_time_assigned->seconds");
 
     $time = 'P'.$time_to_peergrade.'D';
 
-    $time_finish = $time_created;
+    $time_finish = $time_assigned;
 
     $time_finish->add(new DateInterval("$time"));
 
@@ -685,8 +799,11 @@ public function verify_post_expired($postid, $peerforum, $peergrade){
     $date_time_current->year = $time_current_db['year'];
     $date_time_current->mon = $time_current_db['mon'];
     $date_time_current->mday = $time_current_db['mday'];
+    $date_time_current->hours = $time_current_db['hours'];
+    $date_time_current->minutes = $time_current_db['minutes'];
+    $date_time_current->seconds = $time_current_db['seconds'];
 
-    $time_current = new DateTime("$date_time_current->year-$date_time_current->mon-$date_time_current->mday");
+    $time_current = new DateTime("$date_time_current->year-$date_time_current->mon-$date_time_current->mday $date_time_current->hours:$date_time_current->minutes:$date_time_current->seconds");
 
     $time_interval = date_diff($time_finish, $time_current);
 
@@ -714,12 +831,15 @@ public function verify_post_expired($postid, $peerforum, $peergrade){
     return $data;
 }
 
+public function update_posts_expired($userid, $courseid){
+
+
+}
+
 public function update_post_expired($postid, $userid, $courseid, $peerforum){
     global $DB;
 
-    $posts_user = $DB->get_record('peerforum_peergrade_users', array('courseid' => $courseid, 'peerforum' => $peerforum->id, 'iduser' => $userid));
-
-    //$postparent = $DB->get_record('peerforum_posts', array('id' => $postid))->parent;
+    $posts_user = $DB->get_record('peerforum_peergrade_users', array('courseid' => $courseid, 'iduser' => $userid));
 
     //if($postparent != 0 || $postparent != 1) {
     if (user_has_role_assignment($userid, 5)) {
@@ -728,43 +848,66 @@ public function update_post_expired($postid, $userid, $courseid, $peerforum){
         $isstudent = false;
     }
 
-    if($isstudent){
+    if(!empty($posts_user)){
 
-        $data = new stdClass();
-        $data->id = $posts_user->id;
+        if($isstudent){
 
-        if(!empty($posts_user)){
-            $posts_expired = $posts_user->postsexpired;
-            $posts_expired = explode(';', $posts_expired);
-            $posts_expired = array_filter($posts_expired);
+            $data = new stdClass();
+            $data->id = $posts_user->id;
 
-            if(!in_array($postid, $posts_expired)){
-                array_push($posts_expired, $postid);
+            if(!empty($posts_user)){
+                $posts_expired = $posts_user->postsexpired;
+                $posts_expired = explode(';', $posts_expired);
                 $posts_expired = array_filter($posts_expired);
-                $posts_expired = implode(';', $posts_expired);
+
+                if(in_array(-1, $posts_expired)){
+                    $a = array_search(-1, $posts_expired);
+                    unset($posts_expired[$a]);
+                    $posts = implode(';', $posts_expired);
+                    $data = new stdClass();
+                    $data->id = $posts_user->id;
+                    $data->postsexpired = $posts;
+                    $DB->update_record('peerforum_peergrade_users', $data);
+                }
+
+                if(!in_array($postid, $posts_expired)){
+                    array_push($posts_expired, $postid);
+                    $posts_expired = array_filter($posts_expired);
+                    $posts_expired = implode(';', $posts_expired);
 
 
-                $data->postsexpired = $posts_expired;
+                    $data->postsexpired = $posts_expired;
 
-                $DB->update_record('peerforum_peergrade_users', $data);
-            }
+                    $DB->update_record('peerforum_peergrade_users', $data);
+                }
 
-            $poststopeergrade = $posts_user->poststopeergrade;
-            $poststopeergrade = explode(';', $poststopeergrade);
-            $poststopeergrade = array_filter($poststopeergrade);
-
-
-            if(in_array($postid, $poststopeergrade)){
-                $key = array_search($postid, $poststopeergrade);
-                unset($poststopeergrade[$key]);
+                $poststopeergrade = $posts_user->poststopeergrade;
+                $poststopeergrade = explode(';', $poststopeergrade);
                 $poststopeergrade = array_filter($poststopeergrade);
 
-                $poststopeergrade = implode(';', $poststopeergrade);
-                $data->poststopeergrade = $poststopeergrade;
+                if(in_array(-1, $poststopeergrade)){
+                    $a = array_search(-1, $poststopeergrade);
+                    unset($poststopeergrade[$a]);
+                    $posts = implode(';', $poststopeergrade);
+                    $data = new stdClass();
+                    $data->id = $posts_user->id;
+                    $data->poststopeergrade = $posts;
+                    $DB->update_record('peerforum_peergrade_users', $data);
+                }
 
-                $DB->update_record("peerforum_peergrade_users", $data);
+
+                if(in_array($postid, $poststopeergrade)){
+                    $key = array_search($postid, $poststopeergrade);
+                    unset($poststopeergrade[$key]);
+                    $poststopeergrade = array_filter($poststopeergrade);
+
+                    $poststopeergrade = implode(';', $poststopeergrade);
+                    $data->poststopeergrade = $poststopeergrade;
+
+                    $DB->update_record("peerforum_peergrade_users", $data);
+                }
+
             }
-
         }
     }
 }
@@ -1016,19 +1159,29 @@ public function can_see_feedbacks($peerforum, $userid, $postid){
 public function verify_exclusivity($postauthor, $grader, $courseid){
     global $DB;
 
-    $conflits = $DB->get_records('peerforum_peergrade_conflits', array('courseid' => $courseid));
-    $conflit = 0;
+    $conflicts = $DB->get_records('peerforum_peergrade_conflict', array('courseid' => $courseid));
+    $conflict = 0;
 
-    foreach ($conflits as $id => $value) {
-        $students = explode(';', $conflits[$id]->idstudents);
+    foreach ($conflicts as $id => $value) {
+        $students = explode(';', $conflicts[$id]->idstudents);
         $students = array_filter($students);
 
+        if(in_array(-1, $students)){
+            $a = array_search(-1, $students);
+            unset($students[$a]);
+            $sts = implode(';', $students);
+            $data = new stdClass();
+            $data->id = $conflicts[$id]->id;
+            $data->idstudents= $sts;
+            $DB->update_record('peerforum_peergrade_conflict', $data);
+        }
+
         if(in_array($grader, $students) && in_array($postauthor, $students)){
-            $conflit = 1;
+            $conflict = 1;
             break;
         }
     }
-    return $conflit;
+    return $conflict;
 }
     /**
      * Returns true if the user is able to rate this peergrade object
@@ -1431,10 +1584,10 @@ class peergrade_manager {
                 $data_prof->iduser = $userid;
                 $data_prof->courseid = $courseid;
                 $data_prof->peerforum = $peerforumid;
-                $data_prof->poststopeergrade = 0;
-                $data_prof->postspeergradedone = 0;
-                $data_prof->postsblocked = 0;
-                $data_prof->postsexpired = 0;
+                $data_prof->poststopeergrade = -1;
+                $data_prof->postspeergradedone = -1;
+                $data_prof->postsblocked = -1;
+                $data_prof->postsexpired = -1;
 
                 $DB->insert_record('peerforum_peergrade_users', $data_prof);
 
@@ -1457,6 +1610,7 @@ class peergrade_manager {
 
             $all_posts = array_filter($all_posts);
             $posts_updated = implode(';', $all_posts);
+
 
             $data = new stdClass();
             $data->id = $posts[$userid]->id;

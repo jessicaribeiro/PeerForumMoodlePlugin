@@ -42,7 +42,7 @@ $feedback   = required_param('feedback', PARAM_TEXT); // Required for non-ajax r
 
 $result = new stdClass;
 
-global $USER, $COURSE;
+global $USER, $COURSE, $DB;
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm);
@@ -182,14 +182,43 @@ if($userpeergrade == PEERGRADE_UNSET_PEERGRADE && $feedback == PEERGRADE_UNSET_F
 
     //redirect($returnurl);
 } else if ($userpeergrade != PEERGRADE_UNSET_PEERGRADE && $feedback != PEERGRADE_UNSET_FEEDBACK){
-    //$str = $OUTPUT->error_text(get_string('submited:peergrade', 'peerforum'));
-    $edit = '<p>'.get_string("peergradeaddedtimeleft", "peerforum", format_time($CFG->maxeditingtime)) . '</p>';
-    $str = $OUTPUT->notification(get_string('submited:peergrade', 'peerforum').$edit, 'notifymessage');
+    $timemodified = $DB->get_record('peerforum_time_assigned', array('postid' => $itemid, 'userid' => $USER->id));
 
+    $maxtime = $CFG->maxeditingtime;
+
+    if(!empty($timemodified)){
+        $time_m = $timemodified->timemodified;
+        $modify = $maxtime - (time() - $time_m);
+
+    } else {
+        if(has_capability('mod/peerforum:viewallpeergrades', $PAGE->context)){
+
+            $time_teacher = $DB->get_record('peerforum_time_assigned', array('postid' => $itemid, 'userid' => $USER->id));
+
+            if(!$time_teacher){
+                $time = new stdclass();
+                $time->courseid = $COURSE->id;
+                $time->postid = $itemid;
+                $time->userid = $USER->id;
+                $time->timeassigned = time();
+                $time->timemodified = time();
+
+                $DB->insert_record("peerforum_time_assigned", $time);
+
+            }
+        }
+    }
+
+
+    if(!has_capability('mod/peerforum:viewallpeergrades', $PAGE->context)){
+        $edit = '<p>'.get_string("peergradeaddedtimeleft", "peerforum", format_time($modify)) . '</p>';
+        $str = $OUTPUT->notification(get_string('submited:peergrade', 'peerforum').$edit, 'notifymessage');
+    } else {
+        $str = $OUTPUT->notification(get_string('submited:peergrade', 'peerforum'), 'notifymessage');
+    }
 
 
     $returnurl = $returnurl.'&editpostid=-1'.'#p'.$itemid;
     redirect($returnurl, $str, 10);
 
-    //redirect($returnurl);
 }

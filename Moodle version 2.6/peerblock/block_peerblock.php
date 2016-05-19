@@ -38,19 +38,6 @@ class block_peerblock extends block_list {
         );
     }
 
-
-    //definir onde queremos que o bloco apareca
-/*        public function applicable_formats() {
-          return array(
-                   'site-index' => true,
-                  'course-view' => true,
-                  'course-view-social' => false,
-                    'mod' => true,
-                 'mod-quiz' => false
-          );
-        }
-*/
-
     public function specialization() {
         if (empty($this->config->title)) {
             $this->title = get_string('peerblock', 'block_peerblock');
@@ -93,6 +80,14 @@ class block_peerblock extends block_list {
         $num_posts = get_num_posts_to_grade($USER->id, $COURSE->id);
         $time_old_post = get_time_old_post($USER->id, $COURSE->id);
 
+        //$time_old_post = date("H:i", strtotime("$time_old_post->h:$time_old_post->i"));
+        if(!empty($time_old_post)){
+            $time_old_post = $time_old_post->h.'h:'.$time_old_post->i.'m';
+        } else {
+            $time_old_post = '00h00m';
+        }
+
+
         $contextid = context_course::instance($COURSE->id);
         $peerforumid = $contextid->instanceid;
 
@@ -106,7 +101,7 @@ class block_peerblock extends block_list {
         }
 
         if($num_posts > 0 && !has_capability('mod/peerforum:viewallpeergrades', $PAGE->context)){
-            $this->content->items[] = html_writer::tag('span', 'Time to expire: '.$time_old_post .' day(s)', array('style'=>'color:black'));
+            $this->content->items[] = html_writer::tag('span', 'Time to expire: '.$time_old_post , array('style'=>'color:black'));
         }
 
         return $this->content;

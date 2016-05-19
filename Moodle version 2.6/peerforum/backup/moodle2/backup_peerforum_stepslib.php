@@ -75,10 +75,10 @@ class backup_peerforum_activity_structure_step extends backup_activity_structure
         $peergrade = new backup_nested_element('peergrade', array('id'), array(
             'component', 'peergradearea', 'peergradescaleid', 'value', 'userid', 'timecreated', 'timemodified', 'feedback'));
 
-        $conflits = new backup_nested_element('peergrade_conflits');
+        $conflicts = new backup_nested_element('peergrade_conflicts');
 
-        $conflit = new backup_nested_element('peergrade_conflit', array('id'), array(
-            'courseid', 'conflitgroup', 'idstudents', 'namestudents'));
+        $conflict = new backup_nested_element('peergrade_conflict', array('id'), array(
+            'courseid', 'conflictgroup', 'idstudents', 'namestudents'));
 
         $groups = new backup_nested_element('groupss');
 
@@ -141,8 +141,8 @@ class backup_peerforum_activity_structure_step extends backup_activity_structure
         $peerforum->add_child($trackedprefs);
         $trackedprefs->add_child($track);
 
-        $peerforum->add_child($conflits);
-        $conflits->add_child($conflit);
+        $peerforum->add_child($conflicts);
+        $conflicts->add_child($conflict);
 
         $peerforum->add_child($peergradeusers);
         $peergradeusers->add_child($peergradeuser);
@@ -185,7 +185,7 @@ class backup_peerforum_activity_structure_step extends backup_activity_structure
             $peergrade->set_source_alias('peergrade', 'value');
 
 
-            $conflit->set_source_table('peergrade_conflits', array('peerforum'  => backup::VAR_PARENTID));
+            $conflict->set_source_table('peergrade_conflicts', array('peerforum'  => backup::VAR_PARENTID));
 
             $peergradeuser->set_source_table('peergrade_users', array('peerforum'  => backup::VAR_PARENTID));
 

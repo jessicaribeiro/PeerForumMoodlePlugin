@@ -68,6 +68,16 @@ if(isset($_POST['assignpeer'.$itemid])){
 
             $posts = explode(';', $poststograde);
 
+            if(in_array(-1, $posts)){
+                $a = array_search(-1, $posts);
+                unset($posts[$a]);
+                $pts = implode(';', $posts);
+                $data = new stdClass();
+                $data->id = $userid;
+                $data->poststopeergrade = $pts;
+                $DB->update_record('peerforum_peergrade_users', $data);
+            }
+
             $posts = array_filter($posts);
             array_push($posts, $itemid);
             $posts = array_filter($posts);

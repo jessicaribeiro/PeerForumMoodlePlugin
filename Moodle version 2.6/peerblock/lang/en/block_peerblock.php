@@ -18,7 +18,7 @@ $string['managegraders'] = 'Manage Graders';
 $string['manageposts'] = 'Manage Posts';
 $string['assign'] = 'Assign post';
 $string['remove'] = 'Remove post';
-$string['manageconflits'] = 'Manage Conflits';
+$string['manageconflicts'] = 'Manage conflicts';
 
 $string['uploadfile'] = 'Upload file';
 
