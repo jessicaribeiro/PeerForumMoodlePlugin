@@ -1,8 +1,0 @@
-{
-    "moodle-mod_peerforum-subscriptiontoggle": {
-        "requires": [
-            "base-base",
-            "io-base"
-        ]
-    }
-}
