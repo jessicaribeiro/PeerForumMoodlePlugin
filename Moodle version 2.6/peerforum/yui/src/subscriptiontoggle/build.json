@@ -1,0 +1,10 @@
+{
+    "name": "moodle-mod_peerforum-subscriptiontoggle",
+    "builds": {
+        "moodle-mod_peerforum-subscriptiontoggle": {
+            "jsfiles": [
+                "toggle.js"
+            ]
+        }
+    }
+}

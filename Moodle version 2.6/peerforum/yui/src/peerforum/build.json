@@ -1,0 +1,10 @@
+{
+    "name": "moodle-mod_peerforum-peergrade",
+    "builds": {
+        "moodle-mod_peerforum-peergrade": {
+            "jsfiles": [
+                "toggle.js"
+            ]
+        }
+    }
+}
