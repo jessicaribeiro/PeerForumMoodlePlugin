@@ -1,0 +1,421 @@
+/**
+ * Structure of a peerforum post
+ * div.peerforumpost(.read.unread)
+ *     div.header.row
+ *         div.picture.left
+ *         div.topic(.starter)
+ *             div.subject
+ *             div.author
+ *     div.row
+ *         div.side.left
+ *         div.content-mask
+ *             div.content
+ *                 div.attachments
+ *                 div.posting(.shortenedpost|.fullpost)
+ *                     // message
+ *                 div.attachedimages
+ *                     // attachedimages
+ *     div.row
+ *         div.left
+ *         div.options
+ *             div.commands
+ *             div.post-word-count
+ *             div.peerforum-post-rating
+ *             div.link
+ *             div.footer
+ */
+
+#feedbacktext{
+    height:100%;
+    width: 98%;
+}
+
+.peerforumpost {display: block;position:relative;margin:0 0 1em 0;padding:0;border:1px solid #000;max-width:100%;}
+.peerforumpost .row {width:100%;position:relative;}
+.peerforumpost .row .left {float:left;width: 43px;overflow:hidden;}
+.peerforumpost .row .left .grouppictures a {text-align:center;display:block;margin:6px 2px 0 2px;}
+.peerforumpost .row .left .grouppicture {width:20px;height:20px;}
+.peerforumpost .row .topic,
+.peerforumpost .row .content-mask,
+.peerforumpost .row .options {margin-left:43px;}
+.peerforumpost .picture img {margin:4px;}
+.peerforumpost .options .commands,
+.peerforumpost .content .attachments,
+.peerforumpost .options .footer,
+.peerforumpost .options .link {text-align:right;}
+.peerforumpost .options .peerforum-post-rating {float:left;}
+.peerforumpost .content .posting {overflow:auto;max-width:100%;}
+.peerforumpost .content .attachedimages img {max-width:100%;}
+.peerforumpost .post-word-count { font-size: .85em; font-style: italic; }
+.peerforumpost .shortenedpost .post-word-count { display: inline; padding: 0 .3em; }
+
+.peerforumpostfeedback {display: block;position:relative;margin:0 0 1em 0;padding:0;border:1px solid #000;max-width:100%;}
+.peerforumpostfeedback .row {width:100%;position:relative;}
+.peerforumpostfeedback .row .left {float:left;width: 43px;overflow:hidden;}
+.peerforumpostfeedback .row .left .grouppictures a {text-align:center;display:block;margin:6px 2px 0 2px;}
+.peerforumpostfeedback .row .left .grouppicture {width:20px;height:20px;}
+.peerforumpostfeedback .row .topic,
+.peerforumpostfeedback .row .content-mask,
+.peerforumpostfeedback .row .options {margin-left:43px;}
+.peerforumpostfeedback .picture img {margin:4px;}
+.peerforumpostfeedback .options .commands,
+.peerforumpostfeedback .content .attachments,
+.peerforumpostfeedback .options .footer,
+.peerforumpostfeedback .options .link {text-align:right;}
+.peerforumpostfeedback .options .peerforum-post-rating {float:left;}
+.peerforumpostfeedback .content .posting {overflow:auto;max-width:100%;}
+.peerforumpostfeedback .content .attachedimages img {max-width:100%;}
+.peerforumpostfeedback .post-word-count { font-size: .85em; font-style: italic; }
+.peerforumpostfeedback .shortenedpost .post-word-count { display: inline; padding: 0 .3em; }
+
+.peerforumpostseefeedback {display: block;position:relative;margin:0 0 1em 0;padding:0;border:1px solid #000;max-width:100%;}
+.peerforumpostseefeedback .row {width:100%;position:relative;}
+.peerforumpostseefeedback .row .left {float:left;width: 43px;overflow:hidden;}
+.peerforumpostseefeedback .row .left .grouppictures a {text-align:center;display:block;margin:6px 2px 0 2px;}
+.peerforumpostseefeedback .row .left .grouppicture {width:20px;height:20px;}
+.peerforumpostseefeedback .row .topic,
+.peerforumpostseefeedback .row .content-mask,
+.peerforumpostseefeedback .row .options {margin-left:43px;}
+.peerforumpostseefeedback .picture img {margin:4px;}
+.peerforumpostseefeedback .options .commands,
+.peerforumpostseefeedback .content .attachments,
+.peerforumpostseefeedback .options .footer,
+.peerforumpostseefeedback .options .link {text-align:right;}
+.peerforumpostseefeedback .options .peerforum-post-rating {float:left;}
+.peerforumpostseefeedback .content .posting {overflow:auto;max-width:100%;}
+.peerforumpostseefeedback .content .attachedimages img {max-width:100%;}
+.peerforumpostseefeedback .post-word-count { font-size: .85em; font-style: italic; }
+.peerforumpostseefeedback .shortenedpost .post-word-count { display: inline; padding: 0 .3em; }
+
+/*PEER FORUM POSTs MINE*/
+
+.peerforumpost {
+    min-height: 20px;
+    padding: 19px;
+    margin-bottom: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+    -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+    border-color: #e3e3e3;
+    padding: 6px;
+}
+
+.peerforumpostfeedback {
+    min-height: 20px;
+    padding: 19px;
+    margin-bottom: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+    -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+    border-color: #e3e3e3;
+    padding: 6px;
+}
+
+.peerforumpostseefeedback {
+    min-height: 20px;
+    padding: 19px;
+    margin-bottom: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+    -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
+    border-color: #e3e3e3;
+    padding: 6px;
+}
+
+.peerforumpost .header {
+    margin-bottom: 3px;
+}
+
+.peerforumpostfeedback .header {
+    margin-bottom: 3px;
+}
+
+.peerforumpostseefeedback .header {
+    margin-bottom: 3px;
+}
+
+#turnitintool_style .row, .peerforumpost .row {
+    margin-left: 0 !important;
+}
+
+#turnitintool_style .row, .peerforumpostfeedback .row {
+    margin-left: 0 !important;
+}
+
+#turnitintool_style .row, .peerforumpostseefeedback .row {
+    margin-left: 0 !important;
+}
+
+
+.peerforumpost .row .left {
+    width: 48px;
+}
+
+.peerforumpostfeedback .row .left {
+    width: 48px;
+}
+
+.peerforumpostseefeedback .row .left {
+    width: 48px;
+}
+
+
+.peerforumpost .row .topic,
+.peerforumpost .row .content-mask,
+.peerforumpost .row .options {
+    margin-left: 48px;
+}
+
+.peerforumpost .row {
+    width: 100%;
+    position: relative;
+}
+
+.peerforumpostfeedback .row .topic,
+.peerforumpostfeedback .row .content-mask,
+.peerforumpostfeedback .row .options {
+    margin-left: 4px;
+}
+
+.peerforumpostfeedback .row {
+    width: 100%;
+    position: relative;
+}
+
+.peerforumpostseefeedback .row .topic,
+.peerforumpostseefeedback .row .content-mask,
+.peerforumpostseefeedback .row .options {
+    margin-left: 4px;
+}
+
+.peerforumpostseefeedback .row {
+    width: 100%;
+    position: relative;
+}
+
+@media (min-width: 1200px)
+.row {
+    margin-left: -30px;
+}
+.row {
+    margin-left: 0px;
+}
+
+.peerforumpost .row.side {
+    clear: both;
+}
+
+.peerforumpostfeedback .row.side {
+    clear: both;
+}
+
+.peerforumpostseefeedback .row.side {
+    clear: both;
+}
+
+/**/
+
+.dir-rtl .peerforumpostfeedback .row .topic,
+.dir-rtl .peerforumpostfeedback .row .content-mask,
+.dir-rtl .peerforumpostfeedback .row .options {margin-right:43px;margin-left:0;}
+.dir-rtl .peerforumpostfeedback .row .left {float:right;}
+
+.dir-rtl .peerforumpostseefeedback .row .topic,
+.dir-rtl .peerforumpostseefeedback .row .content-mask,
+.dir-rtl .peerforumpostseefeedback .row .options {margin-right:43px;margin-left:0;}
+.dir-rtl .peerforumpostseefeedback .row .left {float:right;}
+
+.dir-rtl .peerforumpost .row .topic,
+.dir-rtl .peerforumpost .row .content-mask,
+.dir-rtl .peerforumpost .row .options {margin-right:43px;margin-left:0;}
+.dir-rtl .peerforumpost .row .left {float:right;}
+.dir-rtl.path-mod-peerforum .indent {
+    margin-right: 3%;
+    margin-left: 0;
+}
+
+.path-mod-peerforum .peerforumolddiscuss,
+#page-mod-peerforum-search .c0 {text-align:right;}
+.path-mod-peerforum .indent {
+    margin-left: 3%;
+}
+
+/*PEER FORUM MINE*/
+.path-mod-peerforum .peerforumheaderlist td {   border: none;}
+.path-mod-peerforum .peerforumheaderlist tr {   border: none; }
+.path-mod-peerforum .peerforumheaderlist th {   border: none; }
+
+.path-mod-peerforum .peerforumheaderlist td.replies {    text-align: center; }
+
+.path-mod-peerforum .peerforumheaderlist th.replies {    text-align: center; }
+.path-mod-peerforum .peerforumheaderlist th .topic {    text-align: left; }
+.path-mod-peerforum .peerforumheaderlist th.lastpost {    text-align: right; }
+
+
+.peerforumheaderlist tbody>tr:nth-child(odd)>td{
+    background-color: #f9f9f9;
+}
+
+.peerforumheaderlist tbody>tr:nth-child(even)>td{
+    background-color: white;
+}
+
+.peerforumheaderlist tbody>tr:nth-child(odd)>td{
+    background-color: #f9f9f9;
+}
+
+.peerforumheaderlist tbody>tr:hover td{
+    background-color: #F5F5F5;
+}
+
+/*--------------*/
+
+.path-mod-peerforum .peerforumheaderlist { width: 100%;border-width:0px;border-style:solid;border-collapse:separate;margin-top: 10px;}
+/*.path-mod-peerforum .peerforumheaderlist td {border-width:1px 0px 0px 1px;border-style:solid;}*/
+.path-mod-peerforum .peerforumheaderlist th.header.replies .iconsmall { margin: 0 .3em;}
+.path-mod-peerforum .peerforumheaderlist .picture {width: 35px;}
+.path-mod-peerforum .peerforumheaderlist .discussion .starter {vertical-align: middle;}
+.path-mod-peerforum .peerforumheaderlist .discussion .lastpost {white-space: nowrap;text-align: right;}
+.path-mod-peerforum .peerforumheaderlist .replies,
+.path-mod-peerforum .peerforumheaderlist .discussion .author {white-space: nowrap;}
+.path-mod-peerforum .peerforumheaderlist thead .discussionsubscription {
+    text-align: center;
+}
+
+
+
+.demo
+{
+color:black;
+}
+
+
+/** Styles for subscribers.php */
+#page-mod-peerforum-subscribers .subscriberdiv,
+#page-mod-peerforum-subscribers .subscribertable {width:100%;vertical-align:top;}
+#page-mod-peerforum-subscribers .subscribertable tr td {vertical-align:top;}
+#page-mod-peerforum-subscribers .subscribertable tr td.actions {width:16%;padding-top:3em;}
+#page-mod-peerforum-subscribers .subscribertable tr td.actions .actionbutton {margin:0.3em 0;padding:0.5em 0;width:100%;}
+#page-mod-peerforum-subscribers .subscribertable tr td.existing,
+#page-mod-peerforum-subscribers .subscribertable tr td.potential {width:42%;}
+
+/** Styles for discuss.php **/
+#page-mod-peerforum-discuss .discussioncontrols {width:100%;margin:5px;}
+#page-mod-peerforum-discuss .discussioncontrols .discussioncontrol {width:33%;float:left;}
+#page-mod-peerforum-discuss .discussioncontrol.exporttoportfolio {text-align:left;}
+#page-mod-peerforum-discuss .discussioncontrol.displaymode {text-align:center;}
+#page-mod-peerforum-discuss .discussioncontrol.movediscussion {float:right;width:auto;text-align:right;padding-right:10px;}
+#page-mod-peerforum-discuss .discussioncontrol.movediscussion .movediscussionoption {}
+
+/** Styles for view.php **/
+#page-mod-peerforum-view .peerforumaddnew {margin-bottom: 20px;}
+#page-mod-peerforum-view .groupmenu {float: left;text-align:left;white-space: nowrap;}
+#page-mod-peerforum-index .subscription,
+#page-mod-peerforum-view .subscription {float: right;text-align:right;white-space: nowrap;margin: 5px 0;}
+
+/** Styles for search.php */
+#page-mod-peerforum-search .introcontent {padding: 15px;font-weight:bold;}
+
+#page-mod-peerforum-index .unread a:first-child,
+#page-mod-peerforum-view .unread a:first-child {padding-right: 10px;}
+#page-mod-peerforum-index .unread img,
+#page-mod-peerforum-view .unread img {margin-left: 5px;}
+#page-mod-peerforum-view .unread img {margin-left: 5px;}
+.dir-rtl#page-mod-peerforum-view .unread img {margin-right: 5px; margin-left: 0; }
+
+/** Unknown Styles ??? */
+#email .unsubscribelink {margin-top:20px;}
+
+/* PeerForumpost unread
+-------------------------*/
+#page-mod-peerforum-view .unread,
+.peerforumpost.unread .row.header,
+.peerforumpostfeedback.unread .row.header,
+.peerforumpostseefeedback.unread .row.header,
+.path-course-view .unread,
+span.unread {
+    background-color: #FFD;
+}
+.peerforumpost.unread .row.header {
+    border-bottom: 1px solid #DDD;
+}
+
+.peerforumpostfeedback.unread .row.header {
+    border-bottom: 1px solid #DDD;
+}
+
+.peerforumpostseefeedback.unread .row.header {
+    border-bottom: 1px solid #DDD;
+}
+
+/* Discussion navigation */
+.path-mod-peerforum .discussion-nav {
+    margin: .5em 0;
+}
+.path-mod-peerforum .discussion-nav ul {
+    margin: 0;
+    list-style: none;
+}
+.dir-rtl.path-mod-peerforum .discussion-nav .next-discussion:after,
+.path-mod-peerforum .discussion-nav .prev-discussion:before {
+    content: ' ◄ ';
+}
+.dir-rtl.path-mod-peerforum .discussion-nav .prev-discussion:before,
+.path-mod-peerforum .discussion-nav .next-discussion:after {
+    content: ' ► ';
+}
+.dir-rtl.path-mod-peerforum .discussion-nav .prev-discussion,
+.path-mod-peerforum .discussion-nav .next-discussion {
+    float: right;
+}
+.dir-rtl.path-mod-peerforum .discussion-nav .next-discussion,
+.path-mod-peerforum .discussion-nav .prev-discussion {
+    float: left;
+}
+
+.path-mod-peerforum .preload-subscribe {
+    background: url([[pix:mod_peerforum|t/subscribed]]) no-repeat -9999px -9999px;
+}
+
+.path-mod-peerforum .preload-unsubscribe {
+    background: url([[pix:mod_peerforum|t/unsubscribed]]) no-repeat -9999px -9999px;
+}
+
+.path-mod-peerforum .discussionsubscription {
+    margin-top: -10px;
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+.path-mod-peerforum .discussionsubscription > a > img {
+    width: 12px;
+    padding: 0 4px;
+}
+
+.dir-rtl .path-mod-peerforum .discussionsubscription {
+    text-align: left;
+}
+
+#page-mod-peerforum-view img.timedpost {
+    margin-right: 5px;
+}
+
+.dir-rtl#page-mod-peerforum-view img.timedpost {
+    margin: 3px 0 0 5px;
+    float: right;
+}
