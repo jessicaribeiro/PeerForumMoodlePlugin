@@ -2,7 +2,7 @@
 
 ### Installation
 
-* Place the "peergrade" and "peergrading" folders into the /moodleXX folder of the moodle
+* Place the "peergrade" and "peergrading" and "ratingpeer" folders into the /moodleXX folder of the moodle
 directory.
 
 * Place the "peerforum" folder into the /moodleXX/mod folder of the moodle
@@ -20,6 +20,9 @@ installed modules.
 * Add the "PeerForum" activity to your course.
 
 * Add the "Peer Grade" block to your course.
+
+
+The script "get_ratings.php" retrieve all the PeerForum ratings from database.
 
 
 
