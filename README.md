@@ -32,11 +32,11 @@ installed modules.
 
 * The script '**get_ratings.php**' retrieve all the PeerForum ratings of students from database.
 
-* The script '**get_peergrades**' retrive all the PeerForum peergrades of students given by each peer from database. 
+* The script '**get_peergrades**' retrieve all the PeerForum peergrades of students given by each peer from database. 
 
-* The script '**get_final_peergrade**' retrive all the PeerForum posts peergrades given by the students from database.
+* The script '**get_final_peergrade**' retrieve all the PeerForum posts peergrades given by the students from database.
 
-* The script '**get_students_stats**' retrive the statistics about all the students participating in a PeerForum activity.
+* The script '**get_students_stats**' retrieve the statistics about all the students participating in a PeerForum activity.
 
 
 
