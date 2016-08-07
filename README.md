@@ -26,7 +26,7 @@ installed modules.
 
 * To unistall the plugins go to Site Administration > Plugins > Plugins overview.
 
-* First unistal the 'Peer Grade panel' and then the 'PeerForum'.
+* First unistall the 'Peer Grade panel' and then the 'PeerForum'.
 
 ### PHP Scripts
 
