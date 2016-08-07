@@ -2,13 +2,13 @@
 
 ### Installation
 
-* Place the "peergrade" and "peergrading" and "ratingpeer" folders into the /moodleXX folder of the moodle
+* Place the "peergrade", "peergrading", "ratingpeer" and "peergradecriteria" folders into the /moodleXX folder of the Moodle
 directory.
 
-* Place the "peerforum" folder into the /moodleXX/mod folder of the moodle
+* Place the "peerforum" folder into the /moodleXX/mod folder of the Moodle
 directory.
 
-* Place the "peerblock" folder into the /moodleXX/blocks folder of the moodle
+* Place the "peerblock" folder into the /moodleXX/blocks folder of the Moodle
 directory.
 
 * Go to Site Administration > Notifications and install the peerforum and peerblock plugins (click on 'Upgrade Moodle database now').
@@ -22,14 +22,23 @@ installed modules.
 * Add the "Peer Grade" block to your course.
 
 
-The script "get_ratings.php" retrieve all the PeerForum ratings from database.
-
-
-
 ### Uninstall	
 
 * To unistall the plugins go to Site Administration > Plugins > Plugins overview.
 
 * First unistal the 'Peer Grade panel' and then the 'PeerForum'.
+
+### PHP Scripts
+
+* The script "get_ratings.php" retrieve all the PeerForum ratings of students from database.
+
+* The script "get_peergrades" retrive all the PeerForum peergrades of students given by each peer from database. 
+
+* The script "get_final_peergrade" retrive all the PeerForum posts peergrades given by the students from database.
+
+* The script "get_students_stats" retrive the statistics about all the students participating in a PeerForum activity.
+
+
+
 
 
