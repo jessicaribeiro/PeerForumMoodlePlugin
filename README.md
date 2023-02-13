@@ -1,5 +1,8 @@
 # PeerForumMoodlePlugin
 
+<img width="687" alt="Screenshot 2023-02-13 at 12 22 50" src="https://user-images.githubusercontent.com/6878126/218456790-4ea83992-a8fc-481f-80f8-f9d3f2186e16.png">
+
+
 ### Installation
 
 * Place the '**peergrade**', '**peergrading**', '**ratingpeer**' and '**peergradecriteria**' folders into the /moodleXX folder of the Moodle
